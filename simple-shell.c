@@ -5,12 +5,14 @@
 // Adam Burris
 
 //includes for .c
+// ############################## INCLUDE SECTION ######################################
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
 #include <string.h>
 #include <stdio.h>
 //define some macros for checking the paths and arguments.
+// ############################## DEFINE SECTION ########################################
 #define WHITESPACE " ,\t\n"
 #define BUFFER_SIZE 2000
 #define MAX_ARGS 64
@@ -30,7 +32,7 @@ void init_shell() {
     printf("  #####  # #    # #      ###### ######     #####  #    # ###### ###### ###### \n");
     printf("******************************************************************************\n");
     printf("\n");
-	printf("Developers: Bradley Allen\n\n");
+	printf("Developers: Bradley Allen, Januario Fuentes, Adam Burris\n\n");
 
 }
 
