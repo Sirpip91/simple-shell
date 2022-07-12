@@ -1,6 +1,6 @@
-# simple-shell
+# Simple-Shell
 Simple Shell is a Unix based shell created in C
-
+![shell pic](https://github.com/Sirpip91/simple-shell/blob/main/img/shell1.PNG)
 # Description:
 todo:
 
