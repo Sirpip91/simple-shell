@@ -11,12 +11,34 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <stdio.h>
+#include <pthread.h>
+#include <semaphore.h>
 //define some macros for checking the paths and arguments.
 // ############################## DEFINE SECTION ########################################
 #define WHITESPACE " ,\t\n"
 #define BUFFER_SIZE 2000
 #define MAX_ARGS 64
 #define MAX_ARG_LEN 16
+
+
+void *thread_1();
+void *thread_2();
+
+void *thread_1()
+{
+	while(1)
+	{
+		//do stuff
+	}
+}
+
+void *thread_2()
+{
+	while(1)
+	{
+		//do stuff
+	}
+}
 
 
 
@@ -43,11 +65,11 @@ void printPrompt()
     printf("Simple-Shell$  ");
 }
 	//getter function for the paths of current dir
-char *getPath()
+char *getPaths()
 {
-       char *path = getenv("PATH");
+       char *paths = getenv("PATH");
 	   //returns the paths of type char.
-       		 return strdup(path);
+       		 return strdup(paths);
 }
 
 //main.. this starts the shell. while true get commands and search.. 
@@ -95,7 +117,7 @@ int main(int argc, char **argv)
         }
 
         // pointer paths getPaths.
-        char *paths = getPath();
+        char *paths = getPaths();
 
         // 0 or 1 true or false
         int path_found = 0;
