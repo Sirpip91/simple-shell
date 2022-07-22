@@ -49,10 +49,6 @@ void *thread_1()
 		//save command to token.
         char *command = current_token;
 		//if command is NULL continue waiting.
-        if (command == NULL)
-        {
-            continue;
-        }
 
         // array of command args.
         
@@ -109,7 +105,7 @@ void *thread_1()
         {	
 			//command could not be found.
             printf("Command not found\n");
-            continue;
+           
         }
 		
 	sem_post(&semaphore);	//V()
@@ -178,8 +174,8 @@ int main(int argc, char **argv)
 
 	pthread_join(t1,NULL);
 	pthread_join(t2,NULL);
-	//Destroy semaphor
-	sem_destroy(&semaphore);
+
+
 
 	//while true run the shell and wait for commands
    
