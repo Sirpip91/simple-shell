@@ -34,8 +34,7 @@ char *getPaths();
 
 void *thread_1()
 {
-	while(1)
-	{
+	
 		sem_wait(&semaphore); // p()
 		
         // Output the prompt that is shown to enter commands 
@@ -112,9 +111,7 @@ void *thread_1()
             printf("Command not found\n");
             continue;
         }
-		exit(0);
 		
-	}
 	sem_post(&semaphore);	//V()
 }
 
