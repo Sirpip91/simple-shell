@@ -27,6 +27,8 @@ void *thread_2();
 void init_shell();
 void printPrompt();
 char *getPaths();
+
+void *thread_1()
 {
 	while(1)
 	{
@@ -117,11 +119,11 @@ void *thread_2()
 {
 	while(1)
 	{
-			sem_wait(&semaphore); // P()
+		sem_wait(&semaphore); // P()
 		
-		   execv(executable_path, args);
+		execv(executable_path, args);
           
-		   sem_post(&semaphore);		//V()
+		sem_post(&semaphore);		//V()
         
 	}
 }
@@ -165,6 +167,20 @@ int main(int argc, char **argv)
 
 	//initialize or show that the shell is running
 	init_shell();
+	//create semiphor and thread
+	pthread_t t1, t2;
+	sem_init(&semaphore,0,1);
+	
+	//create t1 
+	pthread_create (&t1, NULL, thread_1,NULL);
+	//create t2
+	pthread_create (&t2, NULL, thread_2,NULL);
+
+	pthread_join(t1,NULL);
+	pthread_join(t2,NULL);
+	//Destroy semaphor
+	sem_destroy(&semaphore);
+
 	//while true run the shell and wait for commands
    
     return 0;
