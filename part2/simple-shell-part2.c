@@ -20,21 +20,26 @@
 #define MAX_ARGS 64
 #define MAX_ARG_LEN 16
 
+//SEMAPHORE DECLARE
 static sem_t semaphore;
 
- // executable path
-        char *executable_path;
-		char *args[MAX_ARGS];
-
+// DECLARE THE SHARED VARS
+char *executable_path;
+char *args[MAX_ARGS];
+//DECLARE FUNCTIONS
 void *thread_1();
 void *thread_2();
 void init_shell();
 void printPrompt();
 char *getPaths();
 
+//THREAD TO READ INPUT FROM COMMAND
 void *thread_1()
 {
-	
+	while(1)
+	{
+
+			
 		sem_wait(&semaphore); // p()
 		
         // Output the prompt that is shown to enter commands 
@@ -49,7 +54,10 @@ void *thread_1()
 		//save command to token.
         char *command = current_token;
 		//if command is NULL continue waiting.
-
+		if (command == NULL)
+        {
+            continue;
+        }
         // array of command args.
         
         // set first space to the command.
@@ -100,28 +108,36 @@ void *thread_1()
 
         }
 
-        	//if path could not be found then return 
+
+
+		        	//if path could not be found then return 
         if (path_found == 0)
         {	
 			//command could not be found.
             printf("Command not found\n");
-           
+           continue;
         }
-		
-	sem_post(&semaphore);	//V()
-}
 
+
+		
+    	sem_post(&semaphore);	//V()
+
+	}
+}
+//THREAD TO EXECV THE COMMAND
 void *thread_2()
 {
+	
 	while(1)
 	{
+
 		sem_wait(&semaphore); // P()
-		
+
 		execv(executable_path, args);
           
 		sem_post(&semaphore);		//V()
-        
-	}
+    }    
+	
 }
 
 
@@ -156,13 +172,16 @@ char *getPaths()
        		 return strdup(paths);
 }
 
-//main.. this starts the shell. while true get commands and search.. 
-//if command is found fork() execute command and return back to main aka parent loop.
+
+//main to start threads
 int main(int argc, char **argv)
 {
 
 	//initialize or show that the shell is running
 	init_shell();
+	
+
+	
 	//create semiphor and thread
 	pthread_t t1, t2;
 	sem_init(&semaphore,0,1);
@@ -175,7 +194,9 @@ int main(int argc, char **argv)
 	//join so they wait for each other
 	pthread_join(t1,NULL);
 	pthread_join(t2,NULL);
-
+	
+	//destroy semaphor
+	sem_destroy(&semaphore);
 	//exit thread
 	pthread_exit(NULL);
 	
