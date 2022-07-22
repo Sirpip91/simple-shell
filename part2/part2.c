@@ -24,8 +24,9 @@ static sem_t semaphore;
 
 void *thread_1();
 void *thread_2();
-
-void *thread_1()
+void init_shell();
+void printPrompt();
+char *getPaths();
 {
 	while(1)
 	{
