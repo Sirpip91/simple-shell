@@ -172,12 +172,13 @@ int main(int argc, char **argv)
 	//create t2
 	pthread_create (&t2, NULL, thread_2,NULL);
 
+	//join so they wait for each other
 	pthread_join(t1,NULL);
 	pthread_join(t2,NULL);
 
-
-
-	//while true run the shell and wait for commands
+	//exit thread
+	pthread_exit(NULL);
+	
    
     return 0;
 }
