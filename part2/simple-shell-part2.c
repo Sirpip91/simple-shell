@@ -20,6 +20,7 @@
 #define MAX_ARGS 64
 #define MAX_ARG_LEN 16
 
+static sem_t semaphore;
 
 void *thread_1();
 void *thread_2();
@@ -28,7 +29,9 @@ void *thread_1()
 {
 	while(1)
 	{
+		sem_wait(&semaphore); // p()
 		//do stuff
+		sem_post(&semaphore); //v()
 	}
 }
 
