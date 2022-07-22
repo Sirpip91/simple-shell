@@ -22,6 +22,10 @@
 
 static sem_t semaphore;
 
+ // executable path
+        char *executable_path;
+		char *args[MAX_ARGS];
+
 void *thread_1();
 void *thread_2();
 void init_shell();
@@ -52,7 +56,7 @@ void *thread_1()
         }
 
         // array of command args.
-        char *args[MAX_ARGS];
+        
         // set first space to the command.
         args[0] = command;
 
@@ -76,8 +80,7 @@ void *thread_1()
 
         // keep track of each path.
         char *current_path = strtok(paths, ":");
-        // executable path
-        char *executable_path;
+       
 			
 			//while there are paths to search
           while (current_path != NULL)
