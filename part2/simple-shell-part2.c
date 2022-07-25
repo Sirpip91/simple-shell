@@ -12,7 +12,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <pthread.h>
-#include <semaphore.h>
 //define some macros for checking the paths and arguments.
 // ############################## DEFINE SECTION ########################################
 #define WHITESPACE " ,\t\n"
@@ -20,126 +19,8 @@
 #define MAX_ARGS 64
 #define MAX_ARG_LEN 16
 
-//SEMAPHORE DECLARE
-static sem_t semaphore;
-
-// DECLARE THE SHARED VARS
 char *executable_path;
 char *args[MAX_ARGS];
-//DECLARE FUNCTIONS
-void *thread_1();
-void *thread_2();
-void init_shell();
-void printPrompt();
-char *getPaths();
-
-//THREAD TO READ INPUT FROM COMMAND
-void *thread_1()
-{
-	while(1)
-	{
-
-			
-		sem_wait(&semaphore); // p()
-		
-        // Output the prompt that is shown to enter commands 
-        printPrompt();
-
-        // read input and send it to the buffer.
-        char buffer[BUFFER_SIZE] = {};
-        fgets(buffer, BUFFER_SIZE, stdin);
-
- 		//get the command.
-        char *current_token = strtok(buffer, WHITESPACE);
-		//save command to token.
-        char *command = current_token;
-		//if command is NULL continue waiting.
-		if (command == NULL)
-        {
-            continue;
-        }
-        // array of command args.
-        
-        // set first space to the command.
-        args[0] = command;
-
-        // go through the array and keep track with arg_index.
-        size_t arg_index = 0;
-
-        // While not at the end of tokens
-        while (current_token != NULL)
-        {
-			//keep reading 
-            current_token = strtok(NULL, WHITESPACE);
-			//increment.
-            args[++arg_index] = current_token;
-        }
-
-        // pointer paths getPaths.
-        char *paths = getPaths();
-
-        // 0 or 1 true or false
-        int path_found = 0;
-
-        // keep track of each path.
-        char *current_path = strtok(paths, ":");
-       
-			
-			//while there are paths to search
-          while (current_path != NULL)
-        {
-           // keep adding and going through paths.
-            executable_path = strdup(current_path);
-			// slash for paths.
-            strcat(executable_path, "/");
-            strcat(executable_path, command);
-
-            // if the path exe is good ==0
-            if (access(executable_path, X_OK) == 0)
-            {
-                // Set path_found will equal 1 which means found.
-                path_found = 1;
-                // break get out of loop
-                break;
-            }
-			
-			//reset the current_path to null.
-            current_path = strtok(NULL, ":");
-
-        }
-
-
-
-		        	//if path could not be found then return 
-        if (path_found == 0)
-        {	
-			//command could not be found.
-            printf("Command not found\n");
-           continue;
-        }
-
-
-		
-    	sem_post(&semaphore);	//V()
-
-	}
-}
-//THREAD TO EXECV THE COMMAND
-void *thread_2()
-{
-	
-	while(1)
-	{
-
-		sem_wait(&semaphore); // P()
-
-		execv(executable_path, args);
-          
-		sem_post(&semaphore);		//V()
-    }    
-	
-}
-
 
 
 //initialize with loaded screen to show user that the shell has been loaded.
@@ -165,41 +46,137 @@ void printPrompt()
     printf("Simple-Shell$  ");
 }
 	//getter function for the paths of current dir
-char *getPaths()
+char *getPath()
 {
-       char *paths = getenv("PATH");
+       char *path = getenv("PATH");
 	   //returns the paths of type char.
-       		 return strdup(paths);
+       		 return strdup(path);
 }
 
 
-//main to start threads
+
+//THREAD1
+void *thread_1(){
+            // Execute the command with included arguments.
+            execv(executable_path, args);
+            // The child process should now exit so that the parent can return
+            // to the prompt.
+            exit(0);
+}
+
+//main.. this starts the shell. while true get commands and search.. 
+//if command is found fork() execute command and return back to main aka parent loop.
 int main(int argc, char **argv)
 {
 
 	//initialize or show that the shell is running
 	init_shell();
-	
+	//while true run the shell and wait for commands
+    while (1)
+    {
+        // Output the prompt that is shown to enter commands 
+        printPrompt();
 
-	
-	//create semiphor and thread
-	pthread_t t1, t2;
-	sem_init(&semaphore,0,1);
-	
-	//create t1 
-	pthread_create (&t1, NULL, thread_1,NULL);
-	//create t2
-	pthread_create (&t2, NULL, thread_2,NULL);
+        // read input and send it to the buffer.
+        char buffer[BUFFER_SIZE] = {};
+        fgets(buffer, BUFFER_SIZE, stdin);
 
-	//join so they wait for each other
-	pthread_join(t1,NULL);
-	pthread_join(t2,NULL);
-	
-	//destroy semaphor
-	sem_destroy(&semaphore);
-	//exit thread
-	pthread_exit(NULL);
-	
-   
+ 		//get the command.
+        char *current_token = strtok(buffer, WHITESPACE);
+		//save command to token.
+        char *command = current_token;
+		//if command is NULL continue waiting.
+        if (command == NULL)
+        {
+            continue;
+        }
+
+        // array of command args.
+        
+        // set first space to the command.
+        args[0] = command;
+
+        // go through the array and keep track with arg_index.
+        size_t arg_index = 0;
+
+        // While not at the end of tokens
+        while (current_token != NULL)
+        {
+			//keep reading 
+            current_token = strtok(NULL, WHITESPACE);
+			//increment.
+            args[++arg_index] = current_token;
+        }
+
+        // pointer paths getPaths.
+        char *paths = getPath();
+
+        // 0 or 1 true or false
+        int path_found = 0;
+
+        // keep track of each path.
+        char *current_path = strtok(paths, ":");
+        // executable path
+        
+			
+			//while there are paths to search
+          while (current_path != NULL)
+        {
+           // keep adding and going through paths.
+            executable_path = strdup(current_path);
+			// slash for paths.
+            strcat(executable_path, "/");
+            strcat(executable_path, command);
+
+            // if the path exe is good ==0
+            if (access(executable_path, X_OK) == 0)
+            {
+                // Set path_found will equal 1 which means found.
+                path_found = 1;
+                // break get out of loop
+                break;
+            }
+			
+			//reset the current_path to null.
+            current_path = strtok(NULL, ":");
+
+        }
+
+        	//if path could not be found then return 
+        if (path_found == 0)
+        {	
+			//command could not be found.
+            printf("Command not found\n");
+            continue;
+        }
+
+        // create the fork so the command can run.
+        //pid_t pid = fork();
+		
+        //INSTEAD CREATE PTHREAD TO EXECUTE COMMAND
+
+		//if pid ==0
+        /*
+        if (pid == 0)
+        {
+            // Execute the command with included arguments.
+            execv(executable_path, args);
+            // The child process should now exit so that the parent can return
+            // to the prompt.
+            exit(0);
+           
+        }
+        else
+        {
+            // parent wait to finish child.
+            wait(NULL);
+        }
+        */
+        pthread_t t1;
+       pthread_create (&t1, NULL, thread_1,NULL);
+
+       pthread_exit(NULL);
+    }
+
     return 0;
 }
