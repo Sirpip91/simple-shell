@@ -19,6 +19,7 @@
 #define MAX_ARGS 64
 #define MAX_ARG_LEN 16
 
+pthread_t t1;
 char *executable_path;
 char *args[MAX_ARGS];
 
@@ -150,6 +151,7 @@ int main(int argc, char **argv)
             continue;
         }
 
+
         // create the fork so the command can run.
         //pid_t pid = fork();
 		
@@ -172,10 +174,16 @@ int main(int argc, char **argv)
             wait(NULL);
         }
         */
-        pthread_t t1;
-       pthread_create (&t1, NULL, thread_1,NULL);
-
-       pthread_exit(NULL);
+       
+// ############################## PTHREAD SECTION ########################################
+        //run the thread which runs the command to execute.
+        pthread_create (&t1, NULL, thread_1,NULL);
+        
+        //BUG-- does not go back to while(1) loop to read another command.
+        //the shell ends...
+      
+        
+       
     }
 
     return 0;
