@@ -19,8 +19,11 @@
 #define MAX_ARGS 64
 #define MAX_ARG_LEN 16
 
+//create variable for thread ID
 pthread_t t1;
+//global varaibles
 char *executable_path;
+//array of command arguments
 char *args[MAX_ARGS];
 
 
@@ -59,16 +62,23 @@ char *getPath()
 //THREAD1
 void *thread_1(){
             // Execute the command with included arguments.
-            execv(executable_path, args);
+            //execv(executable_path, args);
+            
+          // sprintf(executable_path);
+            system(executable_path);
+            //system(executable_path);
+            
+            
             // The child process should now exit so that the parent can return
             // to the prompt.
-            exit(0);
+            pthread_exit(0);
 }
 
 //main.. this starts the shell. while true get commands and search.. 
 //if command is found fork() execute command and return back to main aka parent loop.
 int main(int argc, char **argv)
 {
+    
 
 	//initialize or show that the shell is running
 	init_shell();
@@ -92,7 +102,6 @@ int main(int argc, char **argv)
             continue;
         }
 
-        // array of command args.
         
         // set first space to the command.
         args[0] = command;
@@ -178,10 +187,8 @@ int main(int argc, char **argv)
 // ############################## PTHREAD SECTION ########################################
         //run the thread which runs the command to execute.
         pthread_create (&t1, NULL, thread_1,NULL);
+        pthread_join(t1,NULL);
         
-        //BUG-- does not go back to while(1) loop to read another command.
-        //the shell ends...
-      
         
        
     }
