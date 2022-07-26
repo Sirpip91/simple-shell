@@ -3,6 +3,7 @@
 // Januario Fuentes
 // Bradley Allen
 // Adam Burris
+                                //PART 1 USING FORK()
 
 //includes for .c
 // ############################## INCLUDE SECTION ######################################
@@ -32,7 +33,7 @@ void init_shell() {
     printf("  #####  # #    # #      ###### ######     #####  #    # ###### ###### ###### \n");
     printf("******************************************************************************\n");
     printf("\n");
-	printf("Developers: Bradley Allen, Januario Fuentes, Adam Burris\n\n");
+	printf("Group Members: Bradley Allen, Januario Fuentes, Adam Burris\n\n");
 
 }
 
