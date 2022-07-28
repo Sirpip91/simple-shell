@@ -16,7 +16,7 @@
 #include <errno.h>
 //define some macros for checking the paths and arguments.
 // ############################## DEFINE SECTION ########################################
-#define BUFFER_SIZE 2000
+#define BUFFER_SIZE 1000
 #define MAX_COUNT 10 // Change MAX_COUNT as per maximum number of commands possible
 
 

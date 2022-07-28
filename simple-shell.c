@@ -15,7 +15,7 @@
 //define some macros for checking the paths and arguments.
 // ############################## DEFINE SECTION ########################################
 #define WHITESPACE " ,\t\n"
-#define BUFFER_SIZE 2000
+#define BUFFER_SIZE 1000
 #define MAX_ARGS 64
 #define MAX_ARG_LEN 16
 
@@ -64,14 +64,18 @@ int main(int argc, char **argv)
         // Output the prompt that is shown to enter commands 
         printPrompt();
 
+// ############################## Get Input SECTION ########################################
+
+
         // read input and send it to the buffer.
         char buffer[BUFFER_SIZE] = {};
+        //get the input from stdin and put into buffer.
         fgets(buffer, BUFFER_SIZE, stdin);
 
  		//get the command.
-        char *current_token = strtok(buffer, WHITESPACE);
-		//save command to token.
-        char *command = current_token;
+        char *current_cmd = strtok(buffer, WHITESPACE);
+		//save command to current_cmd temp char.
+        char *command = current_cmd;
 		//if command is NULL continue waiting.
         if (command == NULL)
         {
@@ -86,13 +90,13 @@ int main(int argc, char **argv)
         // go through the array and keep track with arg_index.
         size_t arg_index = 0;
 
-        // While not at the end of tokens
-        while (current_token != NULL)
+        // While not at the end of curent_cmd
+        while (current_cmd != NULL)
         {
 			//keep reading 
-            current_token = strtok(NULL, WHITESPACE);
+            current_cmd = strtok(NULL, WHITESPACE);
 			//increment.
-            args[++arg_index] = current_token;
+            args[++arg_index] = current_cmd;
         }
 
         // pointer paths getPaths.
@@ -133,10 +137,11 @@ int main(int argc, char **argv)
         if (path_found == 0)
         {	
 			//command could not be found.
-            printf("Command not found\n");
+            printf("CMD not valid!\n");
             continue;
         }
 
+// ############################## Fork SECTION ########################################
         // create the fork so the command can run.
         pid_t pid = fork();
 		
